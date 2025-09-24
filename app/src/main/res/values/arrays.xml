@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="aries_mensaje">
+        <item>El día de hoy estará lleno de sorpresas para ti. No dejes pasar ninguna oportunidad.</item>
+        <item>Recuerda que la paciencia es una virtud. Tu energía te impulsará a lograr tus metas.</item>
+        <item>Una persona importante te ofrecerá un consejo valioso. Escúchala atentamente.</item>
+    </string-array>
+
+
+    <string-array name="tauro_mensaje">
+        <item>Es un buen momento para enfocarte en tus finanzas. Podrías recibir una ganancia inesperada.</item>
+        <item>La estabilidad será tu mayor aliada. Mantén los pies en la tierra y sigue con tus planes.</item>
+        <item>Tu sensibilidad estará a flor de piel. Apóyate en tus seres queridos para encontrar calma.</item>
+    </string-array>
+
+    <string-array name="geminis_mensaje">
+        <item>La comunicación fluirá con facilidad. Aprovecha para tener conversaciones pendientes.</item>
+        <item>Tu curiosidad te llevará a descubrir algo nuevo e interesante. Mantén tu mente abierta.</item>
+        <item>Un cambio de planes podría ser una bendición. Adáptate y disfruta del momento.</item>
+    </string-array>
+
+    <string-array name="cancer_mensaje">
+        <item>Conecta con tu lado emocional. Hoy es un buen día para cuidar de ti y de los tuyos.</item>
+        <item>Recibirás el apoyo que necesitas para superar un desafío. No temas pedir ayuda.</item>
+        <item>Tu intuición te guiará. Confía en tus corazonadas, te llevarán por el camino correcto.</item>
+    </string-array>
+
+    <string-array name="leo_mensaje">
+        <item>Es tu momento de brillar. No tengas miedo de ser el centro de atención.</item>
+        <item>Tu creatividad estará en su punto máximo. Úsala para resolver problemas de manera original.</item>
+        <item>Un encuentro social inesperado podría traerte una gran alegría. Disfruta la compañía.</item>
+    </string-array>
+
+    <string-array name="virgo_mensaje">
+        <item>La organización será tu clave al éxito. Dedica tiempo a ordenar tus ideas y tus espacios.</item>
+        <item>Un detalle te hará feliz. Fíjate en las pequeñas cosas que te dan paz.</item>
+        <item>Tu atención a los detalles te permitirá resolver un problema que otros no ven.</item>
+    </string-array>
+
+    <string-array name="libra_mensaje">
+        <item>Busca el equilibrio en todas tus decisiones. Mantén la calma para tomar la mejor opción.</item>
+        <item>Una colaboración con alguien traerá resultados excelentes. Trabaja en equipo.</item>
+        <item>La belleza te rodeará. Hoy es un buen día para apreciar el arte y la armonía.</item>
+    </string-array>
+
+    <string-array name="escorpio_mensaje">
+        <item>Tu intensidad emocional será una fuerza. Canalízala para alcanzar tus objetivos.</item>
+        <item>Hay un misterio que se revelará. Escucha con atención y no te dejes engañar por las apariencias.</item>
+        <item>Conéctate con tu poder interior. Tu fuerza te ayudará a superar cualquier obstáculo.</item>
+    </string-array>
+
+    <string-array name="sagitario_mensaje">
+        <item>La aventura te llama. Es un buen día para salir de tu zona de confort y explorar algo nuevo.</item>
+        <item>Tu optimismo contagiará a los demás. Comparte tu energía positiva con todos.</item>
+        <item>Una oportunidad de aprendizaje te hará crecer. No la dejes pasar por alto.</item>
+    </string-array>
+
+    <string-array name="capricornio_mensaje">
+        <item>La perseverancia te traerá recompensas. Sigue trabajando duro y verás los frutos de tu esfuerzo.</item>
+        <item>Es un día para consolidar tus planes. La disciplina te llevará al éxito.</item>
+        <item>Un mentor o una figura de autoridad te ofrecerá una guía valiosa. No la ignores.</item>
+    </string-array>
+
+    <string-array name="acuario_mensaje">
+        <item>Tu originalidad brillará. No temas ser diferente y mostrar tu verdadera personalidad.</item>
+        <item>Una amistad inesperada podría surgir. Abre tu mente a nuevas conexiones.</item>
+        <item>Una idea innovadora podría cambiar tu camino. Confía en tu visión de futuro.</item>
+    </string-array>
+
+    <string-array name="piscis_mensaje">
+        <item>Tu sensibilidad te conectará con los demás. Es un buen día para ser empático.</item>
+        <item>Deja fluir tu creatividad. Una actividad artística podría traerte mucha alegría.</item>
+        <item>Hay una fuerza espiritual que te guía. Escucha la voz de tu corazón y tu intuición.</item>
+    </string-array>
+</resources>

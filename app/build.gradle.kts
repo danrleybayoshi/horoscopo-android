@@ -7,6 +7,11 @@ android {
     namespace = "com.example.horoscopo_android"
     compileSdk = 36
 
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.horoscopo_android"
         minSdk = 28
