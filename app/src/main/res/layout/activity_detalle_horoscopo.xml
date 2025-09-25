@@ -7,6 +7,13 @@
     android:padding="16dp"
     tools:context=".DetalleHoroscopoActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_half_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.31" />
+
     <ImageView
         android:id="@+id/ivDetalleSigno"
         android:layout_width="120dp"
@@ -14,14 +21,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="48dp"
         tools:srcCompat="@drawable/ic_aries" />
 
     <TextView
         android:id="@+id/tvDetalleNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="6dp"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +40,6 @@
         android:id="@+id/tvDetalleFechas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,19 +47,61 @@
         app:layout_constraintTop_toBottomOf="@id/tvDetalleNombre"
         tools:text="21 de marzo - 19 de abril" />
 
-    <TextView
-        android:id="@+id/tvMensajeHoroscopo"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clMensajeContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="28dp"
-        android:gravity="center_horizontal"
-        android:padding="28dp"
-        android:textColor="@color/cardview_shadow_start_color"
-        android:textSize="42sp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDetalleFechas"
-        tools:text="El día de hoy estará lleno de sorpresas para ti..." />
+        app:layout_constraintTop_toBottomOf="@+id/tvDetalleFechas">
+
+
+        <ImageView
+            android:id="@+id/ivFondoMensaje"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_fortune1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="110dp"
+            android:layout_marginEnd="108dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="204dp"
+            app:cardCornerRadius="200dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@id/ivFondoMensaje"
+            app:layout_constraintEnd_toEndOf="@id/ivFondoMensaje"
+            app:layout_constraintStart_toStartOf="@id/ivFondoMensaje"
+            app:layout_constraintTop_toTopOf="@id/ivFondoMensaje">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="20dp"                      android:scrollbars="none">                  <TextView
+                android:id="@+id/tvMensajeHoroscopo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                android:textStyle="italic|bold"
+                tools:text="El día de hoy estará lleno de sorpresas para ti. No dejes pasar ninguna oportunidad. La paciencia es una virtud. Si el texto es más largo, esta zona de predicción te permitirá deslizarlo verticalmente para que se ajuste a los límites de la bola de cristal." />
+
+            </ScrollView>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
