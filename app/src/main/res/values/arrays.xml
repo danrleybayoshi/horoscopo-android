@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="translation_languages_names">
+        <item>Inglés</item>
+        <item>Francés</item>
+        <item>Alemán</item>
+        <item>Portugués</item>
+        <item>Italiano</item>
+    </string-array>
+
+    <string-array name="translation_languages_codes">
+        <item>en</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>pt</item>
+        <item>it</item>
+    </string-array>
+</resources>

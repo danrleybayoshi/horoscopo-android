@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+}
+
+// ⚠️ Paso 1: Lee las propiedades del archivo local.properties (si existe)
+// Esto permite acceder a las claves que definiremos allí.
+val properties = Properties()
+if (rootProject.file("local.properties").exists()) {
+    rootProject.file("local.properties").inputStream().use { properties.load(it) }
 }
 
 android {
@@ -10,6 +19,8 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        // Habilitar la generación de la clase BuildConfig
+        buildConfig = true
     }
 
     defaultConfig {
@@ -20,6 +31,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // ⚠️ Paso 2: Inyecta SOLO la clave API necesaria (RAPIDAPI_KEY)
+        // El host se gestiona en HoroscopoService.kt y ya no se inyecta aquí.
+        buildConfigField("String", "RAPIDAPI_KEY", properties.getProperty("RAPIDAPI_KEY", "\"CLAVE_DE_PRUEBA\""))
+        // Eliminamos buildConfigField para RAPIDAPI_HOST (que era de la API de traducción)
     }
 
     buildTypes {
@@ -42,13 +58,14 @@ android {
 
 dependencies {
 
-    // --- DEPENDENCIAS DE RED (AJUSTADAS Y COMPLETADAS) ---
-    // Retrofit y conversor GSON
+    // --- DEPENDENCIAS DE RED (PARA HORÓSCOPO) ---
+    // Retrofit y conversor GSON (Necesario para la API)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    // 💡 SOLUCIÓN: Cliente OkHttp (Necesario para 'Interceptor' y 'OkHttpClient')
+
+    // OkHttp (Necesario para OkHttpClient y LoggingInterceptor)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    // Logging-interceptor (opcional, útil para debugging)
+    // Logging-interceptor (Útil para debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Kotlin Coroutines
