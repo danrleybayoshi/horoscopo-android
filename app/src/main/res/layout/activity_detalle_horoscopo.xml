@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.31" />
+        app:layout_constraintGuide_percent="0.42" />
 
     <ImageView
         android:id="@+id/ivDetalleSigno"
@@ -21,7 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="64dp"
         tools:srcCompat="@drawable/ic_aries" />
 
     <TextView
@@ -86,10 +86,14 @@
             app:layout_constraintTop_toTopOf="@id/ivFondoMensaje">
 
             <ScrollView
+                android:id="@+id/mensajeScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:padding="20dp"                      android:scrollbars="none">                  <TextView
+                android:padding="20dp"
+                android:scrollbars="none">
+
+                <TextView
                 android:id="@+id/tvMensajeHoroscopo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
