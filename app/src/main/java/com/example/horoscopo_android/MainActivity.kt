@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("horoscopo_nombre_id", horoscopo.nombreId)
             intent.putExtra("horoscopo_fechas_id", horoscopo.fechasId)
             intent.putExtra("horoscopo_imagen_id", horoscopo.imagenId)
-            intent.putExtra("horoscopo_mensaje_id", horoscopo.mensajeId)
+            // 💡 CORRECCIÓN 1: Eliminada la línea de putExtra, ya que el mensaje
+            // se carga mediante la API dentro de DetalleHoroscopoActivity.kt
             startActivity(intent)
         }
 
@@ -141,19 +142,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getHoroscopoList(): List<Horoscopo> {
+        // 💡 CORRECCIÓN 2: Eliminado el cuarto parámetro (R.array.xxx_mensaje) de todos los constructores
+        // para coincidir con la nueva estructura de la clase Horoscopo (que solo necesita tres parámetros).
         return listOf(
-            Horoscopo(R.string.aries_nombre, R.string.aries_fechas, R.drawable.ic_aries, R.array.aries_mensaje),
-            Horoscopo(R.string.tauro_nombre, R.string.tauro_fechas, R.drawable.ic_tauro, R.array.tauro_mensaje),
-            Horoscopo(R.string.geminis_nombre, R.string.geminis_fechas, R.drawable.ic_geminis, R.array.geminis_mensaje),
-            Horoscopo(R.string.cancer_nombre, R.string.cancer_fechas, R.drawable.ic_cancer, R.array.cancer_mensaje),
-            Horoscopo(R.string.leo_nombre, R.string.leo_fechas, R.drawable.ic_leo, R.array.leo_mensaje),
-            Horoscopo(R.string.virgo_nombre, R.string.virgo_fechas, R.drawable.ic_virgo, R.array.virgo_mensaje),
-            Horoscopo(R.string.libra_nombre, R.string.libra_fechas, R.drawable.ic_libra, R.array.libra_mensaje),
-            Horoscopo(R.string.escorpio_nombre, R.string.escorpio_fechas, R.drawable.ic_escorpio, R.array.escorpio_mensaje),
-            Horoscopo(R.string.sagitario_nombre, R.string.sagitario_fechas, R.drawable.ic_sagitario, R.array.sagitario_mensaje),
-            Horoscopo(R.string.capricornio_nombre, R.string.capricornio_fechas, R.drawable.ic_capricornio, R.array.capricornio_mensaje),
-            Horoscopo(R.string.acuario_nombre, R.string.acuario_fechas, R.drawable.ic_acuario, R.array.acuario_mensaje),
-            Horoscopo(R.string.piscis_nombre, R.string.piscis_fechas, R.drawable.ic_piscis, R.array.piscis_mensaje)
+            Horoscopo(R.string.aries_nombre, R.string.aries_fechas, R.drawable.ic_aries),
+            Horoscopo(R.string.tauro_nombre, R.string.tauro_fechas, R.drawable.ic_tauro),
+            Horoscopo(R.string.geminis_nombre, R.string.geminis_fechas, R.drawable.ic_geminis),
+            Horoscopo(R.string.cancer_nombre, R.string.cancer_fechas, R.drawable.ic_cancer),
+            Horoscopo(R.string.leo_nombre, R.string.leo_fechas, R.drawable.ic_leo),
+            Horoscopo(R.string.virgo_nombre, R.string.virgo_fechas, R.drawable.ic_virgo),
+            Horoscopo(R.string.libra_nombre, R.string.libra_fechas, R.drawable.ic_libra),
+            Horoscopo(R.string.escorpio_nombre, R.string.escorpio_fechas, R.drawable.ic_escorpio),
+            Horoscopo(R.string.sagitario_nombre, R.string.sagitario_fechas, R.drawable.ic_sagitario),
+            Horoscopo(R.string.capricornio_nombre, R.string.capricornio_fechas, R.drawable.ic_capricornio),
+            Horoscopo(R.string.acuario_nombre, R.string.acuario_fechas, R.drawable.ic_acuario),
+            Horoscopo(R.string.piscis_nombre, R.string.piscis_fechas, R.drawable.ic_piscis)
         )
     }
 
