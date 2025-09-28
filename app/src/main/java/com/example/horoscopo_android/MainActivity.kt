@@ -2,6 +2,7 @@ package com.example.horoscopo_android
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface // Importación necesaria para Typeface
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.SearchView
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupSearchView()
-        setupUIColors() // Configura los colores de la SearchView
+        setupUIColors() // Configura los colores y estilos de la SearchView
     }
 
     /**
@@ -45,9 +46,10 @@ class MainActivity : AppCompatActivity() {
         // B. Color de la pista (hint) -> Negro más oscuro
         hintTextView?.setHintTextColor(Color.BLACK)
 
-        // C. Aumentar el tamaño del texto y ponerlo en negrita
+        // C. Aumentar el tamaño del texto y ponerlo en cursiva (sin negrita)
         hintTextView?.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 19f)
-        hintTextView?.setTypeface(null, android.graphics.Typeface.BOLD)
+        // ✅ MODIFICACIÓN: Cambiamos Typeface.BOLD por Typeface.ITALIC
+        hintTextView?.setTypeface(null, Typeface.ITALIC)
 
         // --- 2. CONFIGURACIÓN DEL ICONO DE LA LUPA ---
 

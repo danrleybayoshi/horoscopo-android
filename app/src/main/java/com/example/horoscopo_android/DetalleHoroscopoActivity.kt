@@ -32,6 +32,9 @@ class DetalleHoroscopoActivity : AppCompatActivity() {
     private val HOROSCOPE_HOST = HOROSCOPO_API_HOST
     private val HOROSCOPE_BASE_URL = HOROSCOPO_BASE_URL
 
+    // Constante para la duración de la animación (4.0 segundos)
+    private val FADE_DURATION_MS = 4000L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,39 +43,24 @@ class DetalleHoroscopoActivity : AppCompatActivity() {
 
         tvMensajeHoroscopo = binding.tvMensajeHoroscopo
 
-        // Se ejecuta la carga de datos (solo para obtener el nombre del signo)
-        // y la llamada a la API.
+        // 1. INICIALIZAR EL TEXTO COMO INVISIBLE (alpha 0)
+        tvMensajeHoroscopo.alpha = 0f
+
         cargarDatosDetalle()
         cargarHoroscopoDesdeAPI()
     }
 
     /**
      * Recupera el ID del nombre del signo para obtener el nombre en inglés
-     * necesario para la API, ignorando la imagen y las fechas que ya no están en la UI.
+     * necesario para la API.
      */
     private fun cargarDatosDetalle() {
         val nombreId = intent.getIntExtra("horoscopo_nombre_id", -1)
 
-        // El resto de los IDs se ignoran porque no hay views para ellos:
-        // val imagenId = intent.getIntExtra("horoscopo_imagen_id", -1)
-        // val fechasId = intent.getIntExtra("horoscopo_fechas_id", -1)
-
         if (nombreId != -1) {
-            // 1. Mapeo y asignación del nombre para la API
             val nombreSignoEspanol = getString(nombreId).lowercase(Locale.ROOT)
             horoscopoNombre = mapSignoToApiName(nombreSignoEspanol)
-
-            // ❌ Eliminamos las referencias a los TextViews y ImageView que ya no existen:
-            // binding.tvDetalleNombre.setText(nombreId)
-            // if (fechasId != -1) {
-            //     binding.tvDetalleFechas.setText(fechasId)
-            // }
-            // if (imagenId != -1) {
-            //     binding.ivDetalleSigno.setImageResource(imagenId)
-            // }
-
         } else {
-            // Valor por defecto si no se pudo obtener el signo
             horoscopoNombre = "aries"
         }
     }
@@ -113,13 +101,25 @@ class DetalleHoroscopoActivity : AppCompatActivity() {
             .build()
     }
 
-    // ---------------------------------------------------------------------------------
-    // 🎯 FUNCIÓN PRINCIPAL: CARGAR HORÓSCOPO DESDE API
-    // ---------------------------------------------------------------------------------
+    /**
+     * Aplica el efecto de aparición gradual (fade-in).
+     */
+    private fun aplicarFadeIn() {
+        tvMensajeHoroscopo.animate()
+            .alpha(1f) // Transparencia final: totalmente visible
+            .setDuration(FADE_DURATION_MS) // 4.0 segundos
+            .start()
+    }
 
+    /**
+     * Carga el horóscopo desde la API e implementa el efecto de desvanecimiento.
+     */
     private fun cargarHoroscopoDesdeAPI() {
-        // Usamos el nombre del signo para el mensaje de carga, incluso si no se muestra en la UI.
-        tvMensajeHoroscopo.text = "Cargando horóscopo de ${horoscopoNombre.replaceFirstChar { it.titlecase(Locale.ROOT) }}..."
+        // Asigna el mensaje de carga internamente (por si se necesitara un spinner visual)
+        // pero MANTENEMOS la transparencia en 0f (invisible) para evitar el parpadeo.
+        tvMensajeHoroscopo.text = "Consultando el cosmos para ${horoscopoNombre.replaceFirstChar { it.titlecase(Locale.ROOT) }}..."
+        // LÍNEA ELIMINADA: tvMensajeHoroscopo.alpha = 1f
+
         lifecycleScope.launch {
             try {
                 val api = Retrofit.Builder()
@@ -138,12 +138,27 @@ class DetalleHoroscopoActivity : AppCompatActivity() {
                     )
                 }
 
+                // Éxito: Ocultar (confirmamos alpha=0), cambiar texto y aplicar fade-in
+                tvMensajeHoroscopo.alpha = 0f
                 mensajeOriginal = response.predictionText
                 tvMensajeHoroscopo.text = mensajeOriginal
+                aplicarFadeIn()
 
             } catch (e: Exception) {
-                mensajeOriginal = "Error al cargar el horóscopo: ${e.message}. Host: $HOROSCOPE_HOST"
+
+                // Error: Preparar mensaje de error
+                val errorMessage = if (e is retrofit2.HttpException && e.code() == 429) {
+                    "¡Límite de consultas excedido! El cosmos necesita descansar (Error 429). Intenta en unos minutos."
+                } else {
+                    "Error al cargar el horóscopo. Revisa tu clave API o la conexión a internet: ${e.message}"
+                }
+
+                // Aplicar el mensaje de error
+                tvMensajeHoroscopo.alpha = 0f // Asegura que el texto esté oculto antes del fade-in
+                mensajeOriginal = errorMessage
                 tvMensajeHoroscopo.text = mensajeOriginal
+                aplicarFadeIn() // Aplica fade-in al mensaje de error
+
                 Log.e("HOROSCOPE_API", "Excepción de Red/API: ${e.message}", e)
             }
         }
