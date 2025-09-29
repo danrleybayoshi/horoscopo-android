@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Horóscopo</string>
-    <string name="titulo_main_activity">¡OBSERVA TU FUTURO!</string>
-    <string name="boton_traducir">Traducir</string>
     <string name="hint_buscador">Buscar por signo o fecha de nacimiento</string>
     <string name="horoscope_sign_icon_description">Icono del signo del zodíaco</string>
+
+    <string name="imagen_fondo_desc">Imagen de fondo, como una bola de cristal o un cielo estrellado.</string>
+    <string name="favorito_desc">Botón para marcar o desmarcar el signo como favorito.</string>
 
 
     <string name="acuario_nombre">Acuario</string>

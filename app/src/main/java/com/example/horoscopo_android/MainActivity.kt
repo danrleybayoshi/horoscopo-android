@@ -1,9 +1,11 @@
 package com.example.horoscopo_android
 
+import android.content.Context // NECESARIO para SharedPreferences y getSystemService
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Typeface // Importación necesaria para Typeface
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager // NECESARIO para manejar el teclado
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
@@ -20,6 +22,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var horoscopoAdapter: HoroscopoAdapter
     private lateinit var layoutManager: LinearLayoutManager
 
+    private val PREFS_NAME = "HoroscopoPrefs"
+    private val FAVORITES_KEY = "FavoriteSigns"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,98 +32,185 @@ class MainActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupSearchView()
-        setupUIColors() // Configura los colores y estilos de la SearchView
+        setupUIColors()
+        setupSearchButton()
+    }
+
+    // --- SINCRONIZACIÓN DE FAVORITOS ---
+    override fun onResume() {
+        super.onResume()
+        // Cuando el usuario regresa a la lista, forzamos la actualización para mostrar el estado de favoritos.
+        horoscopoAdapter.notifyDataSetChanged()
+    }
+    // -----------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    // GESTIÓN DE FAVORITOS (SharedPreferences)
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Obtiene la instancia de SharedPreferences.
+     */
+    private fun getSharedPreferences() = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    /**
+     * Comprueba si un Horoscopo (identificado por su ID de nombre) está marcado como favorito.
+     */
+    private fun isHoroscopoFavorite(horoscopo: Horoscopo): Boolean {
+        val prefs = getSharedPreferences()
+        // El ID del recurso (Int) lo convertimos a String para guardarlo en el Set
+        val favorites = prefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+        return favorites.contains(horoscopo.nombreId.toString())
+    }
+
+    /**
+     * Alterna el estado de favorito de un Horoscopo.
+     */
+    private fun toggleHoroscopoFavorite(horoscopo: Horoscopo) {
+        val prefs = getSharedPreferences()
+        val editor = prefs.edit()
+
+        // 1. Obtener el conjunto actual de favoritos (como MutableSet)
+        val currentFavorites = prefs.getStringSet(FAVORITES_KEY, emptySet())?.toMutableSet() ?: mutableSetOf()
+        val signId = horoscopo.nombreId.toString()
+
+        // 2. Alternar el estado
+        if (currentFavorites.contains(signId)) {
+            currentFavorites.remove(signId) // Quitar de favoritos
+        } else {
+            currentFavorites.add(signId) // Añadir a favoritos
+        }
+
+        // 3. Guardar el nuevo conjunto
+        editor.putStringSet(FAVORITES_KEY, currentFavorites)
+        editor.apply()
+
+        // 4. Notificar al adaptador para que actualice el icono inmediatamente
+        horoscopoAdapter.notifyDataSetChanged()
+    }
+
+
+    // ---------------------------------------------------------------------------------------------
+    // MANEJO DE VISTA Y EVENTOS
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Configura el botón dedicado para abrir el teclado y ejecutar la búsqueda (simulando Enter).
+     */
+    private fun setupSearchButton() {
+        binding.btnAbrirTeclado.setOnClickListener {
+            binding.searchView.requestFocus()
+
+            // 1. Abrir el teclado
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.searchView.findFocus(), 0)
+
+            // 2. Ejecutar la búsqueda como si se hubiera presionado ENTER
+            val query = binding.searchView.query?.toString()
+            if (query != null && query.isNotEmpty()) {
+                searchAndScroll(query) // Llama a la búsqueda de fecha/nombre completo
+            }
+        }
     }
 
     /**
      * Configura los colores y estilos del componente SearchView (barra de búsqueda).
      */
     private fun setupUIColors() {
-        // --- 1. CONFIGURACIÓN DEL TEXTVIEW INTERNO (Texto de búsqueda y Pista) ---
-
-        // Obtiene el ID del TextView interno que maneja el texto y el hint
+        // ... (Tu lógica de configuración de UI existente)
         val searchSrcTextId = resources.getIdentifier("android:id/search_src_text", null, null)
         val hintTextView = binding.searchView.findViewById<TextView>(searchSrcTextId)
 
-        // A. Color del texto que el usuario escribe -> Negro
         hintTextView?.setTextColor(Color.BLACK)
-
-        // B. Color de la pista (hint) -> Negro más oscuro
         hintTextView?.setHintTextColor(Color.BLACK)
-
-        // C. Aumentar el tamaño del texto y ponerlo en cursiva (sin negrita)
         hintTextView?.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 19f)
-        // ✅ MODIFICACIÓN: Cambiamos Typeface.BOLD por Typeface.ITALIC
         hintTextView?.setTypeface(null, Typeface.ITALIC)
 
-        // --- 2. CONFIGURACIÓN DEL ICONO DE LA LUPA ---
-
-        // Obtiene el ID del ImageView interno que contiene el icono de la lupa
         val searchMagIconId = resources.getIdentifier("android:id/search_mag_icon", null, null)
         val searchIcon = binding.searchView.findViewById<ImageView>(searchMagIconId)
 
-        // D. Color del icono de la lupa -> Negro
+        // Color del icono de la lupa -> Negro (o #444444 si lo cambiaste)
         searchIcon?.setColorFilter(Color.BLACK)
     }
 
-    /**
-     * Configura el RecyclerView, el adaptador y el LinearSnapHelper.
-     */
     private fun setupRecyclerView() {
-        // Inicializa el adaptador con la lista de horóscopos y el listener de clic
-        horoscopoAdapter = HoroscopoAdapter(horoscopoList) { horoscopo ->
-            val intent = Intent(this, DetalleHoroscopoActivity::class.java).apply {
-                putExtra("horoscopo_nombre_id", horoscopo.nombreId)
-                putExtra("horoscopo_fechas_id", horoscopo.fechasId)
-                putExtra("horoscopo_imagen_id", horoscopo.imagenId)
-            }
-            startActivity(intent)
-        }
+        // FIX CRÍTICO: Se pasan los 4 parámetros al adaptador
+        horoscopoAdapter = HoroscopoAdapter(
+            horoscopoList = horoscopoList,
+            onClick = { horoscopo ->
+                val intent = Intent(this, DetalleHoroscopoActivity::class.java).apply {
+                    putExtra("horoscopo_nombre_id", horoscopo.nombreId)
+                    putExtra("horoscopo_fechas_id", horoscopo.fechasId)
+                    putExtra("horoscopo_imagen_id", horoscopo.imagenId)
+                }
+                startActivity(intent)
+            },
+            // FUNCIÓN 3: Comprueba si es favorito
+            isFavoriteChecker = { horoscopo -> isHoroscopoFavorite(horoscopo) },
+            // FUNCIÓN 4: Alterna el estado de favorito
+            onFavoriteClick = { horoscopo -> toggleHoroscopoFavorite(horoscopo) }
+        )
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerViewHoroscopos.adapter = horoscopoAdapter
         binding.recyclerViewHoroscopos.layoutManager = layoutManager
 
-        // Añade LinearSnapHelper para que el scroll se detenga en el centro de cada elemento
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.recyclerViewHoroscopos)
     }
 
     /**
-     * Configura el listener para la barra de búsqueda.
+     * Configuración del buscador con comportamiento híbrido.
      */
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    searchAndScroll(query)
+
+            // --- BÚSQUEDA EN TIEMPO REAL (SOLO POR NOMBRE) ---
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null && newText.length > 0) {
+                    // Solo busca y desplaza por coincidencia parcial de nombre
+                    searchAndScrollByName(newText)
                 }
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // No se realiza ninguna acción en tiempo real
-                return false
+            // --- BÚSQUEDA FINAL (AL PRESIONAR ENTER) ---
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    // Intenta buscar por nombre y luego por fecha
+                    searchAndScroll(query)
+                }
+                return true
             }
         })
     }
 
     /**
      * Busca el horóscopo por nombre o fecha y desplaza el RecyclerView.
+     * Se usa al presionar ENTER o al pulsar el botón de búsqueda.
      */
     private fun searchAndScroll(query: String) {
         val lowerCaseQuery = query.lowercase(Locale.getDefault())
 
-        // 1. Búsqueda por nombre o rango de fechas (texto)
-        val foundHoroscopo = horoscopoList.firstOrNull {
-            getString(it.nombreId).lowercase(Locale.getDefault()).contains(lowerCaseQuery) ||
-                    getString(it.fechasId).lowercase(Locale.getDefault()).contains(lowerCaseQuery)
+        val nameMap = mapSignosForSearch()
+
+        // 1. Intenta buscar por coincidencia de nombre completo/parcial o rango de fechas
+        val foundHoroscopo = horoscopoList.firstOrNull { horoscopo ->
+            val signoEspanol = getString(horoscopo.nombreId).lowercase(Locale.getDefault())
+            val signoIngles = nameMap[signoEspanol] ?: ""
+            val fechasEspanol = getString(horoscopo.fechasId).lowercase(Locale.getDefault())
+
+            // Búsqueda por nombre o rango de fechas (texto)
+            signoEspanol.startsWith(lowerCaseQuery) ||
+                    signoIngles.startsWith(lowerCaseQuery) ||
+                    fechasEspanol.contains(lowerCaseQuery)
         }
 
         if (foundHoroscopo != null) {
             scrollToHoroscopo(foundHoroscopo)
         } else {
-            // 2. Búsqueda por fecha exacta (ej: "15 de marzo")
+            // 2. Si no lo encuentra por texto, intenta la búsqueda por fecha exacta
             val horoscopoByDate = findHoroscopoByDate(query)
             if (horoscopoByDate != null) {
                 scrollToHoroscopo(horoscopoByDate)
@@ -127,20 +219,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Calcula la posición y realiza el scroll.
+     * Busca el horóscopo por nombre y desplaza el RecyclerView.
+     * Este método se usa en TIEMPO REAL (onQueryTextChange).
+     */
+    private fun searchAndScrollByName(query: String) {
+        val lowerCaseQuery = query.lowercase(Locale.getDefault())
+        val nameMap = mapSignosForSearch()
+
+        // Solo busca coincidencias parciales al inicio del nombre.
+        val foundHoroscopo = horoscopoList.firstOrNull { horoscopo ->
+            val signoEspanol = getString(horoscopo.nombreId).lowercase(Locale.getDefault())
+            val signoIngles = nameMap[signoEspanol] ?: ""
+
+            signoEspanol.startsWith(lowerCaseQuery) ||
+                    signoIngles.startsWith(lowerCaseQuery)
+        }
+
+        if (foundHoroscopo != null) {
+            scrollToHoroscopo(foundHoroscopo)
+        }
+    }
+
+
+    /**
+     * Mapea el nombre del signo en español al nombre en inglés para facilitar la búsqueda.
+     */
+    private fun mapSignosForSearch(): Map<String, String> {
+        return mapOf(
+            "aries" to "aries",
+            "tauro" to "taurus",
+            "géminis" to "gemini",
+            "cáncer" to "cancer",
+            "leo" to "leo",
+            "virgo" to "virgo",
+            "libra" to "libra",
+            "escorpio" to "scorpio",
+            "sagitario" to "sagittarius",
+            "capricornio" to "capricorn",
+            "acuario" to "aquarius",
+            "piscis" to "pisces"
+        )
+    }
+
+    /**
+     * Realiza el scroll hasta la posición del horóscopo.
      */
     private fun scrollToHoroscopo(horoscopo: Horoscopo) {
         val position = horoscopoList.indexOf(horoscopo)
-        // Se multiplica por un número grande para simular un carrusel infinito
         val targetPosition = (horoscopoList.size * 1) + position
         binding.recyclerViewHoroscopos.smoothScrollToPosition(targetPosition)
     }
 
     /**
-     * Determina el horóscopo basado en una fecha dada (ej: "15 de marzo").
+     * Determina el horóscopo basado en una fecha dada.
      */
     private fun findHoroscopoByDate(query: String): Horoscopo? {
-        val regex = "(\\d{1,2}) de (\\p{L}+)".toRegex()
+        val regex = "(\\d{1,2})\\s*(?:de\\s*)?(\\p{L}+)".toRegex()
         val matchResult = regex.find(query.lowercase(Locale.getDefault()))
         if (matchResult == null) {
             return null
@@ -148,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 
         val (dayString, monthString) = matchResult.destructured
         val day = dayString.toIntOrNull() ?: return null
-        val month = getMonthNumber(monthString) ?: return null
+        val month = mapMonthNames(monthString) ?: return null
 
         return when {
             // Capricornio (22 Dic - 19 Ene)
@@ -180,22 +314,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Convierte el nombre de un mes en español (en minúsculas) a su número (1 a 12).
+     * Convierte el nombre de un mes a su número.
      */
-    private fun getMonthNumber(monthName: String): Int? {
+    private fun mapMonthNames(monthName: String): Int? {
         return when (monthName) {
-            "enero" -> 1
-            "febrero" -> 2
-            "marzo" -> 3
-            "abril" -> 4
-            "mayo" -> 5
-            "junio" -> 6
-            "julio" -> 7
-            "agosto" -> 8
-            "septiembre" -> 9
-            "octubre" -> 10
-            "noviembre" -> 11
-            "diciembre" -> 12
+            "enero", "january" -> 1
+            "febrero", "february" -> 2
+            "marzo", "march" -> 3
+            "abril", "april" -> 4
+            "mayo", "may" -> 5
+            "junio", "june" -> 6
+            "julio", "july" -> 7
+            "agosto", "august" -> 8
+            "septiembre", "september" -> 9
+            "octubre", "october" -> 10
+            "noviembre", "november" -> 11
+            "diciembre", "december" -> 12
             else -> null
         }
     }
