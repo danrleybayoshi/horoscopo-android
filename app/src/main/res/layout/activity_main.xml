@@ -8,7 +8,6 @@
     android:background="@drawable/ic_fortune"
     tools:context=".MainActivity">
 
-    <!-- Contenedor para el Buscador y el Botón -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clBuscador"
         android:layout_width="0dp"
@@ -20,7 +19,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Nuevo Botón de Búsqueda (abre el teclado) -->
+        <ImageButton
+            android:id="@+id/btnToggleFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Alternar Favorito"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_search"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/btnAbrirTeclado"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <ImageButton
             android:id="@+id/btnAbrirTeclado"
             android:layout_width="40dp"
@@ -33,7 +45,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Barra de Búsqueda (Ahora restringida por el botón) -->
         <SearchView
             android:id="@+id/searchView"
             android:layout_width="0dp"
@@ -43,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnAbrirTeclado" />
+            app:layout_constraintEnd_toStartOf="@+id/btnToggleFavorite" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -51,7 +62,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHoroscopos"
         android:layout_width="0dp"
-        android:layout_height="460dp"
+        android:layout_height="450dp"
         android:paddingHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"

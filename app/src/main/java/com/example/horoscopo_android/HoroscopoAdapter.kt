@@ -3,13 +3,15 @@ package com.example.horoscopo_android
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton // IMPORTACIÓN NECESARIA para manejar el botón de favoritos
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat // Necesario para getColorFilter
 
 class HoroscopoAdapter(
-    private val horoscopoList: List<Horoscopo>,
+    // CAMBIO CLAVE: Cambiamos 'val' por 'var' para que la lista pueda ser reasignada
+    private var horoscopoList: List<Horoscopo>,
     private val onClick: (Horoscopo) -> Unit,
     // Parámetros para la funcionalidad de favoritos
     private val isFavoriteChecker: (Horoscopo) -> Boolean,
@@ -22,7 +24,6 @@ class HoroscopoAdapter(
         val ivSigno: ImageView = view.findViewById(R.id.ivSigno)
         val tvNombreSigno: TextView = view.findViewById(R.id.tvNombreSigno)
         val tvFechas: TextView = view.findViewById(R.id.tvFechas)
-        // FIX: Se agrega la referencia a btnFavorito para resolver el error
         val btnFavorito: ImageButton = view.findViewById(R.id.btnFavorito)
     }
 
@@ -50,21 +51,37 @@ class HoroscopoAdapter(
 
         // 3. Click Listener del Botón de Favoritos (Toggle)
         holder.btnFavorito.setOnClickListener {
-            // Llama al callback en MainActivity para guardar el estado
+            // Llama al callback en MainActivity, que guarda el estado y reordena la lista.
             onFavoriteClick(horoscopo)
-            // Actualiza el icono inmediatamente
+
+            // La llamada a updateFavoriteIcon aquí solo proporciona una retroalimentación visual
+            // instantánea para el item que se acaba de tocar.
             updateFavoriteIcon(holder.btnFavorito, horoscopo)
         }
     }
 
     /**
-     * Helper para actualizar el icono del botón de favorito.
+     * MÉTODO CLAVE: Permite a MainActivity pasar la nueva lista reordenada
+     * y forzar el refresco del RecyclerView.
+     */
+    fun updateList(newList: List<Horoscopo>) {
+        this.horoscopoList = newList
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Helper para actualizar el icono del botón de favorito y aplicar el color.
      */
     private fun updateFavoriteIcon(button: ImageButton, horoscopo: Horoscopo) {
+        val context = button.context
         if (isFavoriteChecker(horoscopo)) {
             button.setImageResource(R.drawable.ic_favorite_filled)
+            // Usamos el color dorado que definiste en R.color.gold_accent
+            button.setColorFilter(ContextCompat.getColor(context, R.color.gold_accent))
         } else {
             button.setImageResource(R.drawable.ic_favorite_border)
+            // Quitamos el tinte si no es favorito
+            button.colorFilter = null
         }
     }
 

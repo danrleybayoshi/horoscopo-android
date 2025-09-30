@@ -6,4 +6,8 @@
     <color name="color_acento">#FFD700</color>
     <color name="color_fondo_app">#0A0A20</color>
     <color name="color_card_background">#2C2C40</color>
+    <color name="gold_accent">#D4AF37</color>
+
+    <!-- Puedes añadir más colores aquí... -->
+    <color name="red">#FF0000</color>
 </resources>

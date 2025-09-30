@@ -1,16 +1,11 @@
-import java.util.Properties
-
+// Plugins que indican qué tipo de proyecto es (Android App y Kotlin)
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
 
-// ⚠️ Paso 1: Lee las propiedades del archivo local.properties (si existe)
-// Esto permite acceder a las claves que definiremos allí.
-val properties = Properties()
-if (rootProject.file("local.properties").exists()) {
-    rootProject.file("local.properties").inputStream().use { properties.load(it) }
-}
+// ❌ Se elimina la sección de lectura manual de 'local.properties'
+// Las propiedades de 'gradle.properties' se acceden directamente vía 'project.properties'
 
 android {
     namespace = "com.example.horoscopo_android"
@@ -32,10 +27,74 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // ⚠️ Paso 2: Inyecta SOLO la clave API necesaria (RAPIDAPI_KEY)
-        // El host se gestiona en HoroscopoService.kt y ya no se inyecta aquí.
-        buildConfigField("String", "RAPIDAPI_KEY", properties.getProperty("RAPIDAPI_KEY", "\"CLAVE_DE_PRUEBA\""))
-        // Eliminamos buildConfigField para RAPIDAPI_HOST (que era de la API de traducción)
+        // ==========================================================
+        // ✅ CLAVES PARA FAILOVER LEÍDAS DESDE GRADLE.PROPERTIES
+        // ==========================================================
+        buildConfigField(
+            "String",
+            "API_KEY_PRINCIPAL", // Único
+            project.properties["MY_API_KEY_PRINCIPAL"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_1", // Único
+            project.properties["MY_API_KEY_RESPALDO_1"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_2", // Único
+            project.properties["MY_API_KEY_RESPALDO_2"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_3", // Único
+            project.properties["MY_API_KEY_RESPALDO_3"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_4", // Único
+            project.properties["MY_API_KEY_RESPALDO_4"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_5", // Único
+            project.properties["MY_API_KEY_RESPALDO_5"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_6", // Único
+            project.properties["MY_API_KEY_RESPALDO_6"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_7", // Único
+            project.properties["MY_API_KEY_RESPALDO_7"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_8", // Único
+            project.properties["MY_API_KEY_RESPALDO_8"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_9", // Único
+            project.properties["MY_API_KEY_RESPALDO_9"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_10", // Único
+            project.properties["MY_API_KEY_RESPALDO_10"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_11", // Único
+            project.properties["MY_API_KEY_RESPALDO_11"] as String
+        )
+        buildConfigField(
+            "String",
+            "API_KEY_RESPALDO_12", // Único
+            project.properties["MY_API_KEY_RESPALDO_12"] as String
+        )
     }
 
     buildTypes {
@@ -58,22 +117,26 @@ android {
 
 dependencies {
 
+    // --- DEPENDENCIAS DE ARQUITECTURA (Para ViewModel y Coroutines Scope) ---
+    // ✅ NECESARIO para que Kotlin reconozca 'viewModelScope'
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
     // --- DEPENDENCIAS DE RED (PARA HORÓSCOPO) ---
-    // Retrofit y conversor GSON (Necesario para la API)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // OkHttp (Necesario para OkHttpClient y LoggingInterceptor)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    // Logging-interceptor (Útil para debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // --- DEPENDENCIAS DE ANDROID ---
+    // --- DEPENDENCIAS DE UI Y ANDROID ---
     implementation("androidx.core:core-ktx:1.12.0")
+
+    // RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 
     // Asumo que estas dependencias vienen del libs.toml
     implementation(libs.androidx.appcompat)
