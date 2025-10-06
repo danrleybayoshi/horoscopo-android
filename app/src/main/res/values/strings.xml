@@ -3,6 +3,12 @@
     <string name="hint_buscador">Buscar por signo o fecha de nacimiento</string>
     <string name="horoscope_sign_icon_description">Icono del signo del zodíaco</string>
 
+
+    <string name="periodo_dia_desc">Seleccionar predicción diaria.</string>
+    <string name="periodo_semana_desc">Seleccionar predicción semanal.</string>
+    <string name="periodo_mes_desc">Seleccionar predicción mensual.</string>
+
+
     <string name="imagen_fondo_desc">Imagen de fondo, como una bola de cristal o un cielo estrellado.</string>
     <string name="favorito_desc">Botón para marcar o desmarcar el signo como favorito.</string>
 

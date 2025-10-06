@@ -1,39 +1,20 @@
 package com.example.horoscopo_android
 
+import java.io.Serializable
+
 /**
- * Clase de datos que representa un signo del horóscopo.
- * Contiene referencias a recursos (R.string, R.drawable) para la UI.
+ * Modelo de datos para un signo del zodiaco en la lista principal.
+ * Usa IDs de recursos (Int) para nombres e imágenes, facilitando la localización.
+ * Implementa Serializable para ser pasado fácilmente entre Activities (requerido por el Intent).
  *
- * @param id Identificador único (0-11) usado para ordenar y guardar favoritos.
- * @param nombreId Resource ID del nombre del signo (ej: R.string.aries_nombre).
- * @param fechasId Resource ID de las fechas del signo (ej: R.string.aries_fechas).
- * @param imagenId Resource ID de la imagen/icono del signo (ej: R.drawable.ic_aries).
+ * @param id ID interno único del signo (0-11). Se usa para la API y favoritos.
+ * @param nombreId Resource ID (R.string.x) del nombre del signo.
+ * @param fechasId Resource ID (R.string.x) de las fechas del signo.
+ * @param imagenId Resource ID (R.drawable.ic_x) del icono.
  */
 data class Horoscopo(
     val id: Int,
     val nombreId: Int,
     val fechasId: Int,
     val imagenId: Int
-) {
-    /**
-     * Mapea el ID interno del Horóscopo a un nombre de signo en minúsculas para la API.
-     * Esta función es crucial para formar la URL de consulta de la API.
-     */
-    fun getApiSignName(): String {
-        return when (id) {
-            0 -> "aries"
-            1 -> "tauro"
-            2 -> "geminis"
-            3 -> "cancer"
-            4 -> "leo"
-            5 -> "virgo"
-            6 -> "libra"
-            7 -> "escorpio"
-            8 -> "sagitario"
-            9 -> "capricornio"
-            10 -> "acuario"
-            11 -> "piscis"
-            else -> throw IllegalArgumentException("ID de horóscopo no válido: $id")
-        }
-    }
-}
+) : Serializable
